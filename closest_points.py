@@ -4,6 +4,13 @@ from itertools import combinations
 import sys
 from random import randint
 
+import sys
+import threading
+# import math
+# from typing import List, Union
+sys.setrecursionlimit(10 ** 9)  # max depth of recursion
+threading.stack_size(2 ** 27)  # new thread will get stack of such size
+
 from math import sqrt
 
 Point = namedtuple('Point', 'x y')
@@ -50,7 +57,7 @@ def minimum_distance_squared(points):
 
     #print(f"points: {points}")
 
-    def min_dist_recurs(points, x_sort, y_sort):
+    def min_dist_recurs(x_sort, y_sort):
         #print(points)
         if len(points) <= 1:
             #print("len <= 1")
@@ -65,13 +72,11 @@ def minimum_distance_squared(points):
             return min(distance_squared(points[0], points[1]), distance_squared(points[0], points[2]),\
                 distance_squared(points[1], points[2]))
 
-        mid_x_index= len(x_sort) // 2
+        mid_x_index = len(x_sort) // 2
         x_sort_left = x_sort[:mid_x_index]
         x_sort_right = x_sort[mid_x_index:]
-        points_left = x_sort_left
-        points_right = x_sort_right
 
-        points_left_set = set(points_left)
+        points_left_set = set(x_sort_left)
         #points_left = x_sort[:mid_x_index]
         #points_right = x_sort[mid_x_index:]
 
@@ -85,8 +90,8 @@ def minimum_distance_squared(points):
         #print(f"y_sort_left {y_sort_left}")
         #print(f"y_sort_right {y_sort_right}")
 
-        min_dist = min(min_dist_recurs(points_left, x_sort_left, y_sort_left),\
-            min_dist_recurs(points_right, x_sort_right, y_sort_right))
+        min_dist = min(min_dist_recurs(x_sort_left, y_sort_left),\
+            min_dist_recurs(x_sort_right, y_sort_right))
         #print(f"min_dist_recurs_left min_dist_recurs(points_left, x_sort_left, y_sort_left)")
         #print(f"min_dist_recurs_right min_dist_recurs(points_right, x_sort_right, y_sort_right)")
         #print(f"min_dist {min_dist}")
@@ -155,7 +160,7 @@ def minimum_distance_squared(points):
 
     x_sort = sorted(points, key=lambda point: point.x)
     y_sort = sorted(points, key=lambda point: point.y)
-    return sqrt(min_dist_recurs(points, x_sort, y_sort))
+    return sqrt(min_dist_recurs(x_sort, y_sort))
     # return min_dist_recurs(points, x_sort, y_sort)
 
 
